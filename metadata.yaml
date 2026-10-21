@@ -1,0 +1,6 @@
+name: astrbot_plugin_github_observer
+display_name: GitHub 观测站
+desc: 监看市场插件下载量、排名、Star 与版本，可联动监看其 GitHub 仓库，支持 Fork、提交、Release、Issue、PR 及北京时间日周月报与订阅推送。
+version: 0.2.3
+author: rytte
+astrbot_version: ">=4.27,<5"

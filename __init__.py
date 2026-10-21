@@ -1,0 +1,1 @@
+"""GitHub Observer for AstrBot."""

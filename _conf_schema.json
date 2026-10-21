@@ -1,0 +1,37 @@
+{
+  "targets": {
+    "description": "监看目标",
+    "type": "template_list",
+    "default": [],
+    "hint": "添加市场插件或 GitHub 仓库。别名可选，不填时使用市场 ID 或 owner/repo 作为命令中的目标标识；目标标识不能重复。修改配置后重载插件。只保存已配置目标的统计数据。",
+    "templates": {
+      "market": {
+        "name": "市场插件",
+        "items": {
+          "alias": {"type": "string", "description": "目标别名（可选）", "default": "", "hint": "可留空，命令中直接使用市场 ID；填写后使用此别名，不能含空白、逗号、/ 或 |。"},
+          "plugin_id": {"type": "string", "description": "市场 ID", "default": "", "hint": "填写市场的 作者/插件名；市场作者可能不同于 GitHub 仓库所有者。"},
+          "metrics": {"type": "list", "description": "附加指标", "default": [], "options": ["version"], "labels": ["市场版本变更"], "render_type": "checkbox", "hint": "下载量、下载排名和 Star 始终采集并显示；可选监看市场版本变更。排名按全市场累计下载量排序，同下载量并列。上述指标直接读取市场接口，无需 GitHub Token。采集、报表、订阅推送和动态查询统一使用此处启用的全部指标，修改并重载后自动跟随。"},
+          "github_enabled": {"type": "bool", "description": "同时监看 GitHub 仓库", "default": false, "hint": "自动使用市场记录中的 GitHub 仓库地址。开启后增加 Fork 和勾选的仓库活动指标，Star 继续读取市场数据。关闭后停止该目标的仓库采集，保留已勾选的选项和历史。"},
+          "github": {"type": "object", "description": "GitHub 仓库", "default": {"metrics": []}, "condition": {"github_enabled": true}, "items": {
+            "metrics": {"type": "list", "description": "附加指标", "default": [], "options": ["commits", "release", "issues", "prs"], "labels": ["提交活动", "Release 发布", "Issue", "PR"], "render_type": "checkbox", "hint": "Fork 始终采集。可选监看提交活动、Release、Issue 和 PR，提交活动使用仓库默认分支。采集、报表、订阅推送和动态查询统一使用此处启用的全部指标。"}
+          }}
+        }
+      },
+      "github": {
+        "name": "GitHub 仓库",
+        "items": {
+          "alias": {"type": "string", "description": "目标别名（可选）", "default": "", "hint": "可留空，命令中直接使用 owner/repo；填写后使用此别名，不能含空白、逗号、/ 或 |。"},
+          "repo": {"type": "string", "description": "GitHub 仓库", "default": "", "hint": "填写 owner/repo，不带 URL 和 .git 后缀。"},
+          "branch": {"type": "string", "description": "提交活动分支", "default": "", "hint": "留空监看仓库默认分支；也可指定一个分支，例如 main、develop。"},
+          "metrics": {"type": "list", "description": "附加指标", "default": [], "options": ["commits", "release", "issues", "prs"], "labels": ["提交活动", "Release 发布", "Issue", "PR"], "render_type": "checkbox", "hint": "Star 和 Fork 始终采集并显示。可选监看提交活动、Release、Issue 和 PR。采集、报表、订阅推送和动态查询统一使用此处启用的全部指标，修改并重载后自动跟随。"}
+        }
+      }
+    }
+  },
+  "github_token": {"type": "string", "description": "GitHub Token", "default": "", "hint": "GitHub 仓库目标和开启关联仓库监看的市场目标使用，可留空，推荐配置以提高 API 配额。市场插件的下载量、下载排名、Star 和市场版本仍读取市场接口。仅调用读取接口；公开仓库使用具备公开仓库读取权限的 Token 即可。Token 不会发送给市场接口或显示在报告中。"},
+  "market_url": {"type": "string", "description": "插件市场接口", "default": "https://cloud.astrbot.app/api/v1/market/plugins.json", "hint": "要求含 $meta.schema_version=1、作者/插件名规范键的当前市场格式，不读取旧版无 schema 的源。"},
+  "poll_minutes": {"type": "int", "description": "采集间隔（分钟）", "default": 60, "hint": "5～1440；启动时立即采集，并在北京时间零点安排一次采集。调度每 30 秒检查，实际时间受网络和采集耗时影响。"},
+  "request_timeout": {"type": "int", "description": "单次 HTTP 请求超时（秒）", "default": 30, "hint": "5～120。"},
+  "max_pages": {"type": "int", "description": "单个分页接口最大页数", "default": 50, "hint": "1～500，每页最多 100 条。超过上限明确报错，不把截断数据计为完整结果。"},
+  "push_time": {"type": "string", "description": "周期报告推送时间", "default": "09:00", "hint": "北京时间 HH:MM。日报次日发送，周报下周一发送，月报下月 1 日发送。"}
+}
