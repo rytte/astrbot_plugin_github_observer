@@ -200,13 +200,18 @@ class Service:
                     delta = (
                         f"⬆️{change} 名" if change > 0 else f"⬇️{-change} 名" if change < 0 else "➖"
                     )
-                elif metric == "downloads" and any(
-                    b[1] < a[1] for a, b in zip(samples, samples[1:])
-                ):
-                    delta = "⚠️ 计数下降，增量不可用"
                 else:
                     change = last[1] - first[1]
-                    delta = f"⬆️{change}" if change > 0 else f"⬇️{-change}" if change < 0 else "➖"
+                    if change > 0:
+                        delta = f"⬆️{change}"
+                    elif change < 0:
+                        delta = f"⬇️{change}" if metric == "downloads" else f"⬇️{-change}"
+                    else:
+                        delta = "➖"
+                    if metric == "downloads" and any(
+                        b[1] < a[1] for a, b in zip(samples, samples[1:])
+                    ):
+                        notices.append("期间发生计数回退")
                 current = f"第 {last[1]:,} 名" if metric == "download_rank" else f"{last[1]:,}"
                 lines.append(f"{label}：{current}｜{delta}")
                 interval = self.settings.poll_minutes * 60

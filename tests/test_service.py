@@ -481,7 +481,7 @@ async def test_stored_subscriptions_include_required_rank_in_each_push(env, kind
     assert "Star：5｜⬆️2" in sender.call_args.args[1]
 
 
-def test_download_counter_reset_and_single_sample_are_not_false_zeroes(env):
+def test_download_counter_reset_keeps_signed_net_change_and_warns(env):
     service, storage, _, clock, _ = env
     start = clock()
     storage.snapshot("market:author/plugin", start, {"downloads": 100})
@@ -490,8 +490,20 @@ def test_download_counter_reset_and_single_sample_are_not_false_zeroes(env):
     storage.snapshot("market:author/plugin", start + 3600, {"downloads": 90})
     clock.advance(7200)
     text = service.report((service.target("plugin"),), "day", date(2026, 10, 19))
-    assert "⚠️ 计数下降，增量不可用" in text
-    assert "⬇️10" not in text
+    assert "下载：90｜⬇️-10" in text
+    assert "期间发生计数回退" in text
+
+
+def test_download_counter_reset_warns_even_when_net_change_recovers(env):
+    service, storage, _, clock, _ = env
+    start = clock()
+    storage.snapshot("market:author/plugin", start, {"downloads": 100})
+    storage.snapshot("market:author/plugin", start + 3600, {"downloads": 90})
+    storage.snapshot("market:author/plugin", start + 7200, {"downloads": 120})
+    clock.advance(10800)
+    text = service.report((service.target("plugin"),), "day", date(2026, 10, 19))
+    assert "下载：120｜⬆️20" in text
+    assert "期间发生计数回退" in text
 
 
 def test_stale_baseline_and_missing_end_are_visible(env):
