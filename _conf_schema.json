@@ -7,6 +7,7 @@
     "templates": {
       "market": {
         "name": "市场插件",
+        "display_item": "plugin_id",
         "items": {
           "alias": {"type": "string", "description": "目标别名（可选）", "default": "", "hint": "可留空，命令中直接使用市场 ID；填写后使用此别名，不能含空白、逗号、/ 或 |。"},
           "plugin_id": {"type": "string", "description": "市场 ID", "default": "", "hint": "填写市场的 作者/插件名；市场作者可能不同于 GitHub 仓库所有者。"},

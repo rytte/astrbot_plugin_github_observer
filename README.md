@@ -27,7 +27,7 @@ AstrBot 插件 `astrbot_plugin_github_observer`，支持监看指定市场插件
 
 ## 配置
 
-`targets` 使用 AstrBot 的模板列表，分别选择“市场插件”和“GitHub 仓库”。
+`targets` 使用 AstrBot 的模板列表，分别选择“市场插件”和“GitHub 仓库”。市场插件条目在标题下方显示 `市场 ID: 作者/插件名`（使用已填写的市场 ID），收起时也可区分不同插件。
 
 | 字段 | 含义 |
 | --- | --- |
